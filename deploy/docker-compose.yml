@@ -1,0 +1,41 @@
+# Runs Employees Access on the server; both start again on reboot or crash.
+#
+#   cd ~/fingerprint_system/deploy && docker compose up -d
+#
+# Ports (host networking, so the backend sees real client addresses):
+#   8100  backend API  - the terminal (ESP32) talks to this
+#   8080  web app      - phones, browsers and the Android app open this
+#
+# Data: ../backend/biometric.db (backups in ../backups, see backup.sh;
+#       nightly attendance reports in ../reports, see report.py)
+
+name: employees-access
+
+services:
+  backend:
+    image: python:3.13-slim
+    container_name: ea-backend
+    restart: unless-stopped
+    network_mode: host
+    working_dir: /app/backend
+    command: ["python3", "-u", "server.py", "--port", "8100"]
+    environment:
+      TZ: Asia/Kolkata            # attendance days and CSV times use this
+    volumes:
+      - ../backend:/app/backend
+      - ../reports:/app/reports:ro     # saved by report.py, listed in the web app
+
+  web:
+    image: python:3.13-slim
+    container_name: ea-web
+    restart: unless-stopped
+    network_mode: host
+    working_dir: /app/phone
+    command: ["python3", "-u", "serve.py", "--bind", "0.0.0.0", "--port", "8080",
+              "--backend", "http://127.0.0.1:8100"]
+    environment:
+      TZ: Asia/Kolkata
+    volumes:
+      - ../phone:/app/phone:ro
+    depends_on:
+      - backend

@@ -1,0 +1,20 @@
+idf_component_register(
+    SRCS
+        "hello_world_main.c"
+        "ble_enroll.c"
+        "json_util.c"
+    PRIV_REQUIRES
+        spi_flash
+        esp_driver_uart
+        esp_driver_spi
+        esp_driver_gpio
+        esp_hw_support
+        esp_wifi
+        esp_event
+        esp_netif
+        nvs_flash
+        esp_http_client
+        bt
+        tft
+    INCLUDE_DIRS ""
+)

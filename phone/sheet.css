@@ -1,0 +1,97 @@
+/* Data sheet page: spreadsheet-style tables on top of styles.css */
+
+body.sheet-page { padding-bottom: 24px; }
+
+.sheet-page .chip { text-decoration: none; }
+.sheet-page .chip svg { width: 16px; height: 16px; }
+
+.sheet-main { max-width: 1200px; }
+
+.sheet-page .view-head .btn-small { display: inline-flex; gap: 6px; text-decoration: none; }
+.sheet-page .view-head .btn-small svg { width: 18px; height: 18px; stroke-width: 2.2; }
+
+.sheet-tabs { max-width: 480px; }
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px;
+}
+.toolbar .field { min-width: 140px; }
+.toolbar .field.grow { flex: 1; min-width: 200px; }
+.toolbar label { margin: 0 0 5px; font-size: 12px; color: var(--muted); }
+
+select {
+  width: 100%;
+  padding: 12px 13px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.table-wrap {
+  padding: 0;
+  overflow: auto;
+  max-height: calc(100vh - 330px);
+  min-height: 240px;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+th, td {
+  padding: 9px 12px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  cursor: pointer;
+  user-select: none;
+}
+th[aria-sort="ascending"]::after  { content: " ▲"; font-size: 9px; }
+th[aria-sort="descending"]::after { content: " ▼"; font-size: 9px; }
+
+/* Row numbers, like a spreadsheet */
+td.rownum, th.rownum {
+  width: 1%;
+  color: var(--muted);
+  text-align: right;
+  background: var(--surface-2);
+  border-right: 1px solid var(--line);
+  cursor: default;
+}
+
+tbody tr:hover td { background: color-mix(in srgb, var(--primary) 6%, transparent); }
+tbody tr:hover td.rownum { background: var(--surface-2); }
+
+td.num { text-align: right; }
+td .badge { font-size: 11px; }
+
+.empty-note { margin: 0; padding: 30px; text-align: center; color: var(--muted); }
+
+/* No sidebar on this page */
+@media (min-width: 900px) {
+  .sheet-page main { margin: 0 auto; padding: 30px 32px; }
+}
+
+td .badge.punch-in  { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+td .badge.punch-out { color: #6366f1; background: rgba(99, 102, 241, .14); }

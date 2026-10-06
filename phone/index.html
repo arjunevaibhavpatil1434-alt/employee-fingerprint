@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Employees Access</title>
+<meta name="description" content="Admin console for the Employees Access terminal">
+<meta name="theme-color" content="#0b1638">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="brand">
+    <img src="icons/icon.svg" alt="" width="34" height="34">
+    <div>
+      <div class="brand-name">Employees Access</div>
+      <div class="brand-sub">Admin console</div>
+    </div>
+  </div>
+  <button class="chip" id="ble-chip" type="button" aria-label="Terminal connection">
+    <span class="dot" id="ble-chip-dot"></span>
+    <span id="ble-chip-text">Terminal offline</span>
+  </button>
+</header>
+
+<main>
+
+  <!-- ============ DASHBOARD ============ -->
+  <section class="view" id="view-dashboard" data-title="Dashboard">
+    <div class="view-head">
+      <h1>Dashboard</h1>
+      <button class="btn-text" id="refresh" type="button">Refresh</button>
+    </div>
+    <p class="muted" id="last-checked">Checking system status…</p>
+
+    <section class="hero" aria-label="Today">
+      <div class="hero-top">
+        <div>
+          <div class="hero-greet" id="greeting">Welcome</div>
+          <div class="hero-date" id="today-date"></div>
+        </div>
+        <div class="hero-clock" id="clock">--:--</div>
+      </div>
+      <div class="stats">
+        <a class="stat ok" href="#attendance">
+          <div class="stat-value" id="stat-in">–</div>
+          <div class="stat-label">In office now</div>
+        </a>
+        <a class="stat" href="#attendance">
+          <div class="stat-value" id="stat-present">–</div>
+          <div class="stat-label">Present today</div>
+        </a>
+        <a class="stat err" href="#attendance">
+          <div class="stat-value" id="stat-absent">–</div>
+          <div class="stat-label">Absent today</div>
+        </a>
+      </div>
+    </section>
+
+    <h2>System</h2>
+    <div class="tiles">
+      <article class="tile" id="tile-terminal">
+        <div class="tile-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10-5 5V2l5 5L7 17"/></svg>
+        </div>
+        <div class="tile-body">
+          <div class="tile-label">Terminal</div>
+          <div class="tile-value"><span class="dot"></span><span class="tile-state">Not connected</span></div>
+          <div class="tile-detail">CBIO-ENTRY-001 · Bluetooth</div>
+        </div>
+        <button class="btn btn-small" id="tile-connect" type="button">Connect</button>
+      </article>
+
+      <article class="tile" id="tile-server">
+        <div class="tile-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>
+        </div>
+        <div class="tile-body">
+          <div class="tile-label">Server API</div>
+          <div class="tile-value"><span class="dot"></span><span class="tile-state">Checking…</span></div>
+          <div class="tile-detail">On the PC</div>
+        </div>
+      </article>
+
+      <article class="tile" id="tile-database">
+        <div class="tile-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+        </div>
+        <div class="tile-body">
+          <div class="tile-label">Database</div>
+          <div class="tile-value"><span class="dot"></span><span class="tile-state">Checking…</span></div>
+          <div class="tile-detail">SQLite</div>
+        </div>
+      </article>
+    </div>
+
+    <h2>Quick actions</h2>
+    <div class="actions">
+      <a class="action" href="#employees">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="8" r="4"/><path d="M3 21c0-3.9 3.1-7 7-7s7 3.1 7 7M19 8v6M16 11h6"/></svg>
+        <span>Add employee</span>
+      </a>
+      <a class="action" href="#attendance">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span>Today's attendance</span>
+      </a>
+      <a class="action" href="#enroll">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18c-1-2-1.5-4.2-1.5-6.5a7.5 7.5 0 0 1 15 0c0 2.3-.5 4.5-1.5 6.5"/><path d="M9.5 19.5c-.8-2.4-1.2-4.6-1.2-7a3.7 3.7 0 0 1 7.4 0c0 2.4-.4 4.6-1.2 7"/><path d="M12 12.5v9"/></svg>
+        <span>Enroll fingerprint</span>
+      </a>
+    </div>
+
+    <h2>Latest punches <a href="#logs">View all</a></h2>
+    <ul class="activity logs" id="latest">
+      <li class="empty">No check-ins yet.</li>
+    </ul>
+
+    <h2>On this phone</h2>
+    <ul class="activity" id="activity">
+      <li class="empty">No activity yet on this phone.</li>
+    </ul>
+
+    <h2>Settings</h2>
+    <div class="card">
+      <label for="company-id">Company ID</label>
+      <input id="company-id" type="number" inputmode="numeric" min="1" value="1">
+      <p class="hint">New employees are created under this company. It must match the terminal's company.</p>
+      <button class="btn btn-secondary" id="change-server" type="button" hidden>Server address</button>
+      <button class="btn btn-outline" id="logout" type="button">Log out</button>
+    </div>
+  </section>
+
+  <!-- ============ EMPLOYEES ============ -->
+  <section class="view" id="view-employees" data-title="Employees" hidden>
+    <div class="view-head"><h1>Add employee</h1></div>
+    <p class="muted">Create the employee on the server, then enroll their fingerprint.</p>
+
+    <form class="card" id="employee-form" novalidate>
+      <label for="emp-name">Full name <span class="req">*</span></label>
+      <input id="emp-name" name="full_name" autocomplete="name" required>
+
+      <label for="emp-code">Employee code <span class="req">*</span></label>
+      <input id="emp-code" name="employee_code" autocapitalize="characters" placeholder="e.g. EMP-0042" required>
+
+      <label for="emp-dept">Department</label>
+      <input id="emp-dept" name="department" placeholder="e.g. Engineering">
+
+      <div class="two">
+        <div>
+          <label for="emp-email">Email</label>
+          <input id="emp-email" name="email" type="email" inputmode="email" autocomplete="email">
+        </div>
+        <div>
+          <label for="emp-phone">Phone</label>
+          <input id="emp-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel">
+        </div>
+      </div>
+
+      <p class="form-error" id="employee-error" hidden></p>
+      <button class="btn" type="submit" id="employee-submit">Create employee</button>
+    </form>
+
+    <div class="card result" id="employee-result" hidden>
+      <div class="result-icon ok">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </div>
+      <div>
+        <div class="result-title" id="employee-result-name"></div>
+        <div class="muted" id="employee-result-meta"></div>
+      </div>
+      <button class="btn" id="employee-enroll" type="button">Enroll fingerprint</button>
+    </div>
+
+    <h2>All employees <span class="live" id="people-live"><span class="dot ok"></span>Live</span></h2>
+    <div class="card people-tools">
+      <input id="people-search" type="search" placeholder="Search name, code, department…" aria-label="Search employees">
+    </div>
+    <ul class="activity people" id="people">
+      <li class="empty">Loading…</li>
+    </ul>
+    <p class="hint" id="people-updated"></p>
+  </section>
+
+  <!-- ============ ENROLL ============ -->
+  <section class="view" id="view-enroll" data-title="Enroll" hidden>
+    <div class="view-head"><h1>Enroll fingerprint</h1></div>
+    <p class="muted">The employee places their finger on the terminal twice.</p>
+
+    <div class="banner" id="enroll-connect-banner">
+      <div>
+        <strong>Terminal not connected</strong>
+        <div class="muted">Connect over Bluetooth. If asked, enter the 6-digit code shown on the terminal.</div>
+      </div>
+      <button class="btn btn-small" id="banner-connect" type="button">Connect</button>
+    </div>
+
+    <form class="card" id="enroll-form">
+      <label for="enroll-employee">Employee ID <span class="req">*</span></label>
+      <input id="enroll-employee" type="number" inputmode="numeric" min="1" required placeholder="e.g. 2">
+      <p class="hint">The numeric ID the server gave the employee (shown after "Add employee") — not the employee code.</p>
+
+      <label>Finger</label>
+      <div class="hands" role="radiogroup" aria-label="Finger">
+        <div class="hand">
+          <div class="hand-label">Left hand</div>
+          <div class="fingers" id="fingers-left"></div>
+        </div>
+        <div class="hand">
+          <div class="hand-label">Right hand</div>
+          <div class="fingers" id="fingers-right"></div>
+        </div>
+      </div>
+
+      <button class="btn" type="submit" id="enroll-submit" disabled>Start enrollment</button>
+    </form>
+
+    <div class="card progress" id="progress" hidden>
+      <ol class="stepper">
+        <li data-step="1"><span class="bubble">1</span><span>Scan 1</span></li>
+        <li data-step="2"><span class="bubble">2</span><span>Scan 2</span></li>
+        <li data-step="3"><span class="bubble">3</span><span>Save</span></li>
+      </ol>
+      <div class="progress-title" id="progress-title"></div>
+      <div class="muted" id="progress-detail"></div>
+      <p class="hint" id="progress-hint" hidden></p>
+    </div>
+
+    <details class="log">
+      <summary>Bluetooth log</summary>
+      <pre id="log"></pre>
+    </details>
+  </section>
+
+  <!-- ============ ATTENDANCE ============ -->
+  <section class="view" id="view-attendance" data-title="Attendance" hidden>
+    <div class="view-head">
+      <h1>Attendance</h1>
+      <button class="btn-text" id="att-refresh" type="button">Refresh</button>
+    </div>
+    <p class="muted" id="att-updated">Loading…</p>
+
+    <div class="day-picker card">
+      <button type="button" class="day-step" id="att-prev" aria-label="Previous day">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="day-main">
+        <div class="day-label" id="att-day-label">Today</div>
+        <input id="att-date" type="date" aria-label="Date">
+      </div>
+      <button type="button" class="day-step" id="att-next" aria-label="Next day">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="off-banner" id="att-off" hidden></div>
+
+    <div class="att-stats">
+      <div class="att-stat in"><div class="att-num" id="att-in">–</div><div>In office</div></div>
+      <div class="att-stat present"><div class="att-num" id="att-present">–</div><div>Present</div></div>
+      <div class="att-stat absent"><div class="att-num" id="att-absent">–</div><div>Absent</div></div>
+    </div>
+
+    <ul class="activity attendance" id="att-list">
+      <li class="empty">Loading…</li>
+    </ul>
+
+    <h2>Weekends &amp; holidays</h2>
+    <div class="card calendar-card">
+      <label>Weekly off days</label>
+      <div class="weekdays" id="cal-weekend" role="group" aria-label="Weekly off days"></div>
+      <p class="hint">Days with no punches on these days show as Weekend, not Absent.</p>
+
+      <label for="hol-date">Add a holiday</label>
+      <form class="hol-add" id="hol-form" novalidate>
+        <input id="hol-date" type="date" required aria-label="Holiday date">
+        <input id="hol-name" type="text" maxlength="60" placeholder="e.g. Diwali" required aria-label="Holiday name">
+        <button class="btn btn-small" type="submit">Add</button>
+      </form>
+      <p class="form-error" id="hol-error" hidden></p>
+
+      <ul class="holidays" id="hol-list"></ul>
+    </div>
+
+    <h2>Attendance report</h2>
+    <div class="card att-export">
+      <div class="two">
+        <div>
+          <label for="att-from">From</label>
+          <input id="att-from" type="date">
+        </div>
+        <div>
+          <label for="att-to">To</label>
+          <input id="att-to" type="date">
+        </div>
+      </div>
+      <a class="btn" id="att-csv" href="#">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+        Daily summary CSV
+      </a>
+      <p class="hint">One row per employee per day: first in, last out, hours worked, every punch time, and absent days.</p>
+      <a class="btn btn-secondary" id="att-punches-csv" href="#">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+        Every punch time CSV
+      </a>
+      <p class="hint">One row per punch: the exact time of each IN and OUT, and how long each stay inside was.</p>
+    </div>
+
+    <h2>Automatic reports</h2>
+    <div class="card reports-card">
+      <p class="hint reports-note">Saved by the server every night at 00:15 for the day that just ended, and for the whole month on the 1st.</p>
+      <ul class="reports" id="reports-monthly"></ul>
+      <ul class="reports" id="reports-daily"></ul>
+      <button class="btn-text" id="reports-more" type="button" hidden>Show older days</button>
+    </div>
+  </section>
+
+  <!-- ============ LOGS ============ -->
+  <section class="view" id="view-logs" data-title="Logs" hidden>
+    <div class="view-head">
+      <h1>Employee logs</h1>
+      <div class="head-actions">
+        <button class="btn-text" id="logs-csv" type="button" aria-expanded="false" aria-controls="export-panel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+          CSV
+        </button>
+        <button class="btn-text" id="logs-refresh" type="button">Refresh</button>
+      </div>
+    </div>
+    <p class="muted" id="logs-updated">Loading…</p>
+
+    <form class="card export" id="export-panel" hidden novalidate>
+      <div class="export-head">
+        <strong>Export to CSV</strong>
+        <span class="muted" id="export-type"></span>
+      </div>
+
+      <div class="presets" role="group" aria-label="Date range">
+        <button type="button" class="preset" data-range="today">Today</button>
+        <button type="button" class="preset" data-range="week">Last 7 days</button>
+        <button type="button" class="preset" data-range="month">This month</button>
+        <button type="button" class="preset" data-range="all">All time</button>
+      </div>
+
+      <div class="two">
+        <div>
+          <label for="export-from">From</label>
+          <input id="export-from" type="date">
+        </div>
+        <div>
+          <label for="export-to">To</label>
+          <input id="export-to" type="date">
+        </div>
+      </div>
+      <p class="hint">Leave a date empty for no limit on that side. Both days are included.</p>
+
+      <p class="form-error" id="export-error" hidden></p>
+      <button class="btn" type="submit" id="export-download">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+        Download CSV
+      </button>
+    </form>
+
+    <div class="filters" role="group" aria-label="Show">
+      <button type="button" class="filter" data-type="all" aria-pressed="true">All</button>
+      <button type="button" class="filter" data-type="allowed" aria-pressed="false">Allowed</button>
+      <button type="button" class="filter" data-type="denied" aria-pressed="false">Denied</button>
+      <button type="button" class="filter" data-type="enrolled" aria-pressed="false">Enrolled</button>
+    </div>
+
+    <p class="hint sheet-link">Need the full table? <a href="sheet.html">Open the data sheet</a></p>
+
+    <ul class="activity logs" id="logs">
+      <li class="empty">No log entries yet.</li>
+    </ul>
+  </section>
+
+</main>
+
+<nav class="tabbar" aria-label="Sections">
+  <a href="#dashboard" data-tab="dashboard">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+    <span>Dashboard</span>
+  </a>
+  <a href="#employees" data-tab="employees">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><path d="M17 4.5a4 4 0 0 1 0 7M19.5 21c0-2.6-1-4.9-2.7-6.3"/></svg>
+    <span>Employees</span>
+  </a>
+  <a href="#enroll" data-tab="enroll">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18c-1-2-1.5-4.2-1.5-6.5a7.5 7.5 0 0 1 15 0c0 2.3-.5 4.5-1.5 6.5"/><path d="M9.5 19.5c-.8-2.4-1.2-4.6-1.2-7a3.7 3.7 0 0 1 7.4 0c0 2.4-.4 4.6-1.2 7"/><path d="M12 12.5v9"/></svg>
+    <span>Enroll</span>
+  </a>
+  <a href="#attendance" data-tab="attendance">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    <span>Attendance</span>
+  </a>
+  <a href="#logs" data-tab="logs">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+    <span>Logs</span>
+  </a>
+</nav>
+
+<!-- ============ LOGIN ============ -->
+<div class="login" id="login" role="dialog" aria-modal="true" aria-labelledby="login-title" hidden>
+  <form class="login-card" id="login-form" novalidate>
+    <img src="icons/icon.svg" alt="" width="56" height="56">
+    <h1 id="login-title">Employees Access</h1>
+    <p class="muted" id="login-sub">Enter the admin password to continue.</p>
+
+    <div class="setup-note" id="login-setup" hidden>
+      <strong>No admin password yet.</strong>
+      On the PC, run:
+      <code>python3 backend/server.py --set-password</code>
+      then reload this page.
+    </div>
+
+    <label for="login-password">Password</label>
+    <div class="password-field">
+      <input id="login-password" type="password" autocomplete="current-password" required>
+      <button type="button" class="reveal" id="login-reveal" aria-label="Show password" aria-pressed="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
+
+    <p class="form-error" id="login-error" hidden></p>
+    <button class="btn" type="submit" id="login-submit">Log in</button>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="android-bridge.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

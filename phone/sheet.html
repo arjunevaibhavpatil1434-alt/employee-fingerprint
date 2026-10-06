@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Data Sheet · Employees Access</title>
+<meta name="description" content="Spreadsheet view of the Employees Access database">
+<meta name="theme-color" content="#0b1638">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="sheet.css">
+</head>
+<body class="sheet-page">
+
+<header class="appbar">
+  <div class="brand">
+    <img src="icons/icon.svg" alt="" width="34" height="34">
+    <div>
+      <div class="brand-name">Employees Access</div>
+      <div class="brand-sub">Data sheet</div>
+    </div>
+  </div>
+  <a class="chip" href="./">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    Admin console
+  </a>
+</header>
+
+<main class="sheet-main">
+  <div class="view-head">
+    <h1>Data sheet</h1>
+    <a class="btn btn-small" id="download" href="#">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+      Download CSV
+    </a>
+  </div>
+  <p class="muted" id="summary">Loading…</p>
+
+  <div class="filters sheet-tabs" role="tablist" aria-label="Table">
+    <button type="button" class="filter" role="tab" data-table="logs" aria-pressed="true">Access logs</button>
+    <button type="button" class="filter" role="tab" data-table="attendance" aria-pressed="false">Attendance</button>
+    <button type="button" class="filter" role="tab" data-table="employees" aria-pressed="false">Employees</button>
+  </div>
+
+  <form class="toolbar card" id="toolbar">
+    <div class="field" data-for="logs">
+      <label for="f-type">Status</label>
+      <select id="f-type">
+        <option value="all">All</option>
+        <option value="allowed">Allowed</option>
+        <option value="denied">Denied</option>
+        <option value="enrolled">Enrolled</option>
+      </select>
+    </div>
+    <div class="field" data-for="logs attendance">
+      <label for="f-from">From</label>
+      <input id="f-from" type="date">
+    </div>
+    <div class="field" data-for="logs attendance">
+      <label for="f-to">To</label>
+      <input id="f-to" type="date">
+    </div>
+    <div class="field grow">
+      <label for="f-search">Search</label>
+      <input id="f-search" type="search" placeholder="Name, code, department…">
+    </div>
+  </form>
+
+  <div class="table-wrap card">
+    <table id="sheet">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+    <p class="empty-note" id="empty" hidden>No rows match.</p>
+  </div>
+</main>
+
+<script src="sheet.js"></script>
+</body>
+</html>

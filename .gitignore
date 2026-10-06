@@ -1,0 +1,31 @@
+# Live data and generated output (kept on the server, not in git)
+*.db
+backups/
+reports/
+
+# Build output
+build/
+__pycache__/
+*.pyc
+firmware/*/sdkconfig.old
+firmware/*/build.txt
+phone/download/*.apk
+
+# ESP-IDF toolchain (1.8 GB, its own git repo)
+tools/esp/esp-idf/
+
+# Signing key - keep a private copy elsewhere
+*.keystore
+
+# Old snapshots of the firmware main file
+firmware/**/*.c.backup
+firmware/**/*.c.before_*
+firmware/**/*.c.r307s_backup
+
+# IDE
+.idea/
+*.iml
+
+# Local secrets
+firmware/**/secrets.h
+android/signing.env
